@@ -49,13 +49,10 @@ def about():
 @app.route('/create', methods=('GET', 'POST'))
 def create():
     if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-
-        if not title:
-            flash('Title is required!')
-        else:
+        if title := request.form['title']:
             connection = get_db_connection()
+            content = request.form['content']
+
             connection.execute('INSERT INTO posts (title, content) VALUES (?, ?)',
                          (title, content))
             connection.commit()
@@ -63,6 +60,8 @@ def create():
 
             return redirect(url_for('index'))
 
+        else:
+            flash('Title is required!')
     return render_template('create.html')
 
 # start the application on port 3111
